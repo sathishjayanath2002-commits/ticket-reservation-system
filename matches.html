@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLC - Matches</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f4f0; min-height: 100vh; }
+        
+        .navbar {
+            background: #0a3d2a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .logo {
+            color: #f5c542;
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 2rem; }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #e8f0e8;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.4rem 0.2rem;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .nav-links a:hover { border-bottom-color: #f5c542; color: #ffffff; }
+        .nav-links a i { margin-right: 6px; }
+        .btn-signin {
+            background: #f5c542;
+            color: #0a3d2a !important;
+            padding: 0.5rem 1.4rem !important;
+            border-radius: 30px;
+            font-weight: 600 !important;
+            border-bottom: none !important;
+        }
+        .btn-signin:hover {
+            background: #e0b032;
+            transform: scale(1.02);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .page-header h1 {
+            color: #0a3d2a;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .page-header h1 i { color: #f5c542; }
+        .page-header .match-count {
+            color: #5f7a66;
+            font-size: 1rem;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            border: 1px solid #e0ebe2;
+        }
+        .filter-bar select, .filter-bar input {
+            padding: 0.6rem 1rem;
+            border: 2px solid #e0ebe2;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        .filter-bar select:focus, .filter-bar input:focus {
+            border-color: #f5c542;
+            outline: none;
+        }
+        .filter-bar .btn-filter {
+            background: #f5c542;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #0a3d2a;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .filter-bar .btn-filter:hover {
+            background: #e0b032;
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #e0ebe2;
+            transition: 0.3s;
+        }
+        .match-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+        .match-card .match-status {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .status-upcoming { background: #d4edda; color: #155724; }
+        .status-live { background: #fff3cd; color: #856404; }
+        .status-completed { background: #f8d7da; color: #721c24; }
+
+        .match-card .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .match-card .team {
+            text-align: center;
+        }
+        .match-card .team .flag {
+            font-size: 2.5rem;
+            display: block;
+        }
+        .match-card .team .name {
+            font-weight: 600;
+            color: #0a3d2a;
+            margin-top: 4px;
+        }
+        .match-card .team .score {
+            font-size: 0.85rem;
+            color: #5f7a66;
+        }
+        .match-card .vs {
+            font-weight: 700;
+            color: #b8c9bd;
+            font-size: 1.1rem;
+        }
+
+        .match-card .match-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.8rem 0;
+            border-top: 1px solid #f0f4f0;
+            border-bottom: 1px solid #f0f4f0;
+            margin: 0.8rem 0;
+            color: #5f7a66;
+            font-size: 0.9rem;
+        }
+        .match-card .match-info i { color: #b5832b; margin-right: 4px; }
+
+        .match-card .match-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .match-card .btn-book {
+            flex: 1;
+            background: #f5c542;
+            color: #0a3d2a;
+            padding: 0.6rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: 0.2s;
+        }
+        .match-card .btn-book:hover {
+            background: #e0b032;
+        }
+        .match-card .btn-details {
+            background: transparent;
+            color: #0a3d2a;
+            padding: 0.6rem 1rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 2px solid #e0ebe2;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .match-card .btn-details:hover {
+            background: #f0f4f0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0ebe2;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .pagination button:hover, .pagination button.active {
+            background: #f5c542;
+            border-color: #f5c542;
+            color: #0a3d2a;
+        }
+
+        .footer {
+            text-align: center;
+            margin: 3rem 0 1.5rem 0;
+            color: #5f7a66;
+            font-size: 0.9rem;
+            border-top: 1px solid #d0dfd4;
+            padding-top: 1.5rem;
+        }
+        .footer i { color: #f5c542; }
+
+        @media (max-width: 850px) {
+            .matches-grid { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; align-items: stretch; }
+            .nav-links { justify-content: center; gap: 0.8rem; }
+            .filter-bar { flex-direction: column; }
+            .filter-bar select, .filter-bar input { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-cricket"></i> SLC Ticketing
+        </div>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="matches.html" style="border-bottom-color: #f5c542;"><i class="fas fa-calendar-alt"></i> Matches</a>
+            <a href="booking.html"><i class="fas fa-ticket-alt"></i> Buy Tickets</a>
+            <a href="signin.html" class="btn-signin"><i class="fas fa-user"></i> Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-calendar-alt"></i> Matches</h1>
+            <span class="match-count">12 Matches</span>
+        </div>
+
+        <div class="filter-bar">
+            <select>
+                <option value="all">All Matches</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="live">Live</option>
+                <option value="completed">Completed</option>
+            </select>
+            <select>
+                <option value="all">All Teams</option>
+                <option value="sl">Sri Lanka</option>
+                <option value="india">India</option>
+                <option value="aus">Australia</option>
+                <option value="pak">Pakistan</option>
+                <option value="eng">England</option>
+            </select>
+            <input type="text" placeholder="Search for a match...">
+            <button class="btn-filter"><i class="fas fa-search"></i> Search</button>
+        </div>
+
+        <div class="matches-grid">
+            <div class="match-card">
+                <span class="match-status status-upcoming"><i class="fas fa-clock"></i> Upcoming</span>
+                <div class="teams">
+                    <div class="team">
+                        <span class="flag">🇱🇰</span>
+                        <span class="name">Sri Lanka</span>
+                    </div>
+                    <span class="vs">VS</span>
+                    <div class="team">
+                        <span class="flag">🇮🇳</span>
+                        <span class="name">India</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span><i class="fas fa-calendar-day"></i> 2026-07-15</span>
+                    <span><i class="fas fa-clock"></i> 10:00 AM</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Colombo</span>
+                </div>
+                <div class="match-actions">
+                    <a href="booking.html" class="btn-book"><i class="fas fa-ticket"></i> Get Tickets</a>
+                    <a href="#" class="btn-details">Details</a>
+                </div>
+            </div>
+
+            <div class="match-card">
+                <span class="match-status status-upcoming"><i class="fas fa-clock"></i> Upcoming</span>
+                <div class="teams">
+                    <div class="team">
+                        <span class="flag">🇱🇰</span>
+                        <span class="name">Sri Lanka</span>
+                    </div>
+                    <span class="vs">VS</span>
+                    <div class="team">
+                        <span class="flag">🇦🇺</span>
+                        <span class="name">Australia</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span><i class="fas fa-calendar-day"></i> 2026-07-20</span>
+                    <span><i class="fas fa-clock"></i> 07:00 PM</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Galle</span>
+                </div>
+                <div class="match-actions">
+                    <a href="booking.html" class="btn-book"><i class="fas fa-ticket"></i> Get Tickets</a>
+                    <a href="#" class="btn-details">Details</a>
+                </div>
+            </div>
+
+            <div class="match-card">
+                <span class="match-status status-upcoming"><i class="fas fa-clock"></i> Upcoming</span>
+                <div class="teams">
+                    <div class="team">
+                        <span class="flag">🇱🇰</span>
+                        <span class="name">Sri Lanka</span>
+                    </div>
+                    <span class="vs">VS</span>
+                    <div class="team">
+                        <span class="flag">🇵🇰</span>
+                        <span class="name">Pakistan</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span><i class="fas fa-calendar-day"></i> 2026-07-28</span>
+                    <span><i class="fas fa-clock"></i> 09:30 AM</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Pallekele</span>
+                </div>
+                <div class="match-actions">
+                    <a href="booking.html" class="btn-book"><i class="fas fa-ticket"></i> Get Tickets</a>
+                    <a href="#" class="btn-details">Details</a>
+                </div>
+            </div>
+
+            <div class="match-card">
+                <span class="match-status status-upcoming"><i class="fas fa-clock"></i> Upcoming</span>
+                <div class="teams">
+                    <div class="team">
+                        <span class="flag">🇱🇰</span>
+                        <span class="name">Sri Lanka</span>
+                    </div>
+                    <span class="vs">VS</span>
+                    <div class="team">
+                        <span class="flag">🇬🇧</span>
+                        <span class="name">England</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span><i class="fas fa-calendar-day"></i> 2026-08-05</span>
+                    <span><i class="fas fa-clock"></i> 02:00 PM</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Colombo</span>
+                </div>
+                <div class="match-actions">
+                    <a href="booking.html" class="btn-book"><i class="fas fa-ticket"></i> Get Tickets</a>
+                    <a href="#" class="btn-details">Details</a>
+                </div>
+            </div>
+
+            <div class="match-card">
+                <span class="match-status status-live"><i class="fas fa-circle" style="color: red; font-size: 0.6rem;"></i> Live</span>
+                <div class="teams">
+                    <div class="team">
+                        <span class="flag">🇱🇰</span>
+                        <span class="name">Sri Lanka</span>
+                        <span class="score">152/3 (20.2)</span>
+                    </div>
+                    <span class="vs">VS</span>
+                    <div class="team">
+                        <span class="flag">🇮🇳</span>
+                        <span class="name">India</span>
+                        <span class="score">120/5 (15.4)</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span><i class="fas fa-calendar-day"></i> 2026-07-10</span>
+                    <span><i class="fas fa-clock"></i> 02:30 PM</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Colombo</span>
+                </div>
+                <div class="match-actions">
+                    <a href="booking.html" class="btn-book"><i class="fas fa-ticket"></i> Get Tickets</a>
+                    <a href="#" class="btn-details">Details</a>
+                </div>
+            </div>
+
+            <div class="match-card">
+                <span class="match-status status-completed"><i class="fas fa-check-circle"></i> Completed</span>
+                <div class="teams">
+                    <div class="team">
+                        <span class="flag">🇱🇰</span>
+                        <span class="name">Sri Lanka</span>
+                        <span class="score">245/8 (50)</span>
+                    </div>
+                    <span class="vs">VS</span>
+                    <div class="team">
+                        <span class="flag">🇦🇺</span>
+                        <span class="name">Australia</span>
+                        <span class="score">210 (47.2)</span>
+                    </div>
+                </div>
+                <div class="match-info">
+                    <span><i class="fas fa-calendar-day"></i> 2026-07-05</span>
+                    <span><i class="fas fa-clock"></i> 10:00 AM</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Galle</span>
+                </div>
+                <div class="match-actions">
+                    <a href="#" class="btn-details" style="flex:1;">Details</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-shield-alt"></i> Sri Lanka Cricket - Official Ticketing Platform
+    </div>
+</body>
+</html>

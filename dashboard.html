@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLC - My Account</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f4f0; min-height: 100vh; }
+        
+        .navbar {
+            background: #0a3d2a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .logo {
+            color: #f5c542;
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 2rem; }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #e8f0e8;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.4rem 0.2rem;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .nav-links a:hover { border-bottom-color: #f5c542; color: #ffffff; }
+        .nav-links a i { margin-right: 6px; }
+        .btn-logout {
+            background: transparent;
+            border: 2px solid #f5c542;
+            color: #f5c542 !important;
+            padding: 0.4rem 1.2rem !important;
+            border-radius: 30px;
+            font-weight: 600 !important;
+            border-bottom: none !important;
+        }
+        .btn-logout:hover { background: #f5c542; color: #0a3d2a !important; }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #e0ebe2;
+            height: fit-content;
+        }
+        .profile {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e0ebe2;
+        }
+        .profile .avatar {
+            font-size: 4rem;
+            color: #f5c542;
+        }
+        .profile .name { font-weight: 700; color: #0a3d2a; margin-top: 0.5rem; }
+        .profile .email { color: #5f7a66; font-size: 0.9rem; }
+        .sidebar-menu { margin-top: 1.5rem; }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            color: #2d4d39;
+            text-decoration: none;
+            transition: 0.2s;
+            margin-bottom: 0.3rem;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: #f8faf8;
+            color: #0a3d2a;
+        }
+        .sidebar-menu a.active { background: #f0f4f0; border-left: 4px solid #f5c542; }
+        .sidebar-menu a i { width: 20px; color: #b5832b; }
+
+        .main-content h2 {
+            color: #0a3d2a;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .main-content h2 i { color: #f5c542; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #e0ebe2;
+            text-align: center;
+        }
+        .stat-card .number { font-size: 2rem; font-weight: 700; color: #0a3d2a; }
+        .stat-card .label { color: #5f7a66; font-size: 0.9rem; margin-top: 4px; }
+        .stat-card i { font-size: 1.5rem; color: #f5c542; margin-bottom: 8px; }
+
+        .ticket-list {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #e0ebe2;
+            overflow: hidden;
+        }
+        .ticket-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #f0f4f0;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .ticket-item:last-child { border-bottom: none; }
+        .ticket-item .match { font-weight: 600; color: #0a3d2a; }
+        .ticket-item .details { color: #5f7a66; font-size: 0.9rem; }
+        .ticket-item .status {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status.confirmed { background: #d4edda; color: #155724; }
+        .status.pending { background: #fff3cd; color: #856404; }
+        .status.cancelled { background: #f8d7da; color: #721c24; }
+
+        .footer {
+            text-align: center;
+            margin: 3rem 0 1.5rem 0;
+            color: #5f7a66;
+            font-size: 0.9rem;
+            border-top: 1px solid #d0dfd4;
+            padding-top: 1.5rem;
+        }
+        .footer i { color: #f5c542; }
+
+        @media (max-width: 850px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; align-items: stretch; }
+            .nav-links { justify-content: center; gap: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-cricket"></i> SLC Ticketing
+        </div>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="matches.html"><i class="fas fa-calendar-alt"></i> Matches</a>
+            <a href="booking.html"><i class="fas fa-ticket-alt"></i> Buy Tickets</a>
+            <a href="#" style="border-bottom-color: #f5c542;"><i class="fas fa-user"></i> My Account</a>
+            <a href="signin.html" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <aside class="sidebar">
+                <div class="profile">
+                    <div class="avatar"><i class="fas fa-user-circle"></i></div>
+                    <div class="name">Kumar Sangakkara</div>
+                    <div class="email">kumaras@email.com</div>
+                </div>
+                <div class="sidebar-menu">
+                    <a href="#" class="active"><i class="fas fa-ticket-alt"></i> My Tickets</a>
+                    <a href="#"><i class="fas fa-calendar-alt"></i> Upcoming Matches</a>
+                    <a href="#"><i class="fas fa-history"></i> Transaction History</a>
+                    <a href="#"><i class="fas fa-user-edit"></i> Account Settings</a>
+                    <a href="#"><i class="fas fa-headset"></i> Support</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <h2><i class="fas fa-ticket-alt"></i> My Tickets</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-ticket"></i>
+                        <div class="number">3</div>
+                        <div class="label">Total Tickets</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="number">2</div>
+                        <div class="label">Confirmed</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <div class="number">1</div>
+                        <div class="label">Pending</div>
+                    </div>
+                </div>
+
+                <div class="ticket-list">
+                    <div class="ticket-item">
+                        <div>
+                            <div class="match">🇱🇰 Sri Lanka VS 🇮🇳 India</div>
+                            <div class="details"><i class="fas fa-calendar-day"></i> 2026-07-15 | <i class="fas fa-clock"></i> 10:00 AM</div>
+                            <div class="details"><i class="fas fa-map-marker-alt"></i> R. Premadasa Stadium</div>
+                        </div>
+                        <div>
+                            <span class="status confirmed">Confirmed</span>
+                            <div style="margin-top:4px; font-size:0.85rem; color:#5f7a66;">2 Tickets</div>
+                        </div>
+                    </div>
+                    <div class="ticket-item">
+                        <div>
+                            <div class="match">🇱🇰 Sri Lanka VS 🇦🇺 Australia</div>
+                            <div class="details"><i class="fas fa-calendar-day"></i> 2026-07-20 | <i class="fas fa-clock"></i> 07:00 PM</div>
+                            <div class="details"><i class="fas fa-map-marker-alt"></i> Galle International Stadium</div>
+                        </div>
+                        <div>
+                            <span class="status confirmed">Confirmed</span>
+                            <div style="margin-top:4px; font-size:0.85rem; color:#5f7a66;">1 Ticket</div>
+                        </div>
+                    </div>
+                    <div class="ticket-item">
+                        <div>
+                            <div class="match">🇱🇰 Sri Lanka VS 🇵🇰 Pakistan</div>
+                            <div class="details"><i class="fas fa-calendar-day"></i> 2026-07-28 | <i class="fas fa-clock"></i> 09:30 AM</div>
+                            <div class="details"><i class="fas fa-map-marker-alt"></i> Pallekele Stadium</div>
+                        </div>
+                        <div>
+                            <span class="status pending">Pending</span>
+                            <div style="margin-top:4px; font-size:0.85rem; color:#5f7a66;">1 Ticket</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-shield-alt"></i> Sri Lanka Cricket - Official Ticketing Platform
+    </div>
+</body>
+</html>

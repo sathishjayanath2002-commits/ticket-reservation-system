@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLC - Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f4f0; min-height: 100vh; }
+        
+        .navbar {
+            background: #0a3d2a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .logo {
+            color: #f5c542;
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 2rem; }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #e8f0e8;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.4rem 0.2rem;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .nav-links a:hover { border-bottom-color: #f5c542; color: #ffffff; }
+        .nav-links a i { margin-right: 6px; }
+        .btn-signin {
+            background: #f5c542;
+            color: #0a3d2a !important;
+            padding: 0.5rem 1.4rem !important;
+            border-radius: 30px;
+            font-weight: 600 !important;
+            border-bottom: none !important;
+        }
+        .btn-signin:hover {
+            background: #e0b032;
+            transform: scale(1.02);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            border: 1px solid #e0ebe2;
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f4f0;
+        }
+        .booking-header h2 {
+            color: #0a3d2a;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .booking-header h2 i { color: #f5c542; }
+        .booking-header .match-info {
+            color: #5f7a66;
+            font-size: 0.95rem;
+        }
+
+        .match-summary {
+            background: #f8faf8;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .match-summary .team-block {
+            text-align: center;
+        }
+        .match-summary .team-block .flag { font-size: 3rem; }
+        .match-summary .team-block .name { font-weight: 600; color: #1a3d2a; }
+        .match-summary .vs { font-weight: 700; color: #b8c9bd; font-size: 1.2rem; }
+        .match-summary .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d4d39;
+        }
+        .match-summary .detail-item i { color: #b5832b; }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #0a3d2a;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .form-group label i { color: #f5c542; margin-right: 8px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0ebe2;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: 0.2s;
+            background: white;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #f5c542;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(245, 197, 66, 0.15);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .ticket-summary {
+            background: #f8faf8;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .ticket-summary .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #e0ebe2;
+        }
+        .ticket-summary .row:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #0a3d2a;
+        }
+        .ticket-summary .row .label { color: #5f7a66; }
+        .ticket-summary .row .value { font-weight: 600; }
+
+        .btn-proceed {
+            background: #f5c542;
+            border: none;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #0a3d2a;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-proceed:hover {
+            background: #e0b032;
+            transform: scale(1.02);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 2px solid #e0ebe2;
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            color: #2d4d39;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-back:hover {
+            background: #e0ebe2;
+        }
+
+        .footer {
+            text-align: center;
+            margin: 3rem 0 1.5rem 0;
+            color: #5f7a66;
+            font-size: 0.9rem;
+            border-top: 1px solid #d0dfd4;
+            padding-top: 1.5rem;
+        }
+        .footer i { color: #f5c542; }
+
+        @media (max-width: 650px) {
+            .navbar { flex-direction: column; align-items: stretch; }
+            .nav-links { justify-content: center; gap: 0.8rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .match-summary { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-cricket"></i> SLC Ticketing
+        </div>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="matches.html"><i class="fas fa-calendar-alt"></i> Matches</a>
+            <a href="#" style="border-bottom-color: #f5c542;"><i class="fas fa-ticket-alt"></i> Buy Tickets</a>
+            <a href="signin.html" class="btn-signin"><i class="fas fa-user"></i> Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="booking-card">
+            <div class="booking-header">
+                <h2><i class="fas fa-ticket-alt"></i> Ticket Booking</h2>
+                <span class="match-info"><i class="fas fa-calendar-day"></i> Step 1/2</span>
+            </div>
+
+            <div class="match-summary">
+                <div class="team-block">
+                    <div class="flag">🇱🇰</div>
+                    <div class="name">Sri Lanka</div>
+                </div>
+                <span class="vs">VS</span>
+                <div class="team-block">
+                    <div class="flag">🇮🇳</div>
+                    <div class="name">India</div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+                    <span class="detail-item"><i class="fas fa-calendar-day"></i> 2026-07-15</span>
+                    <span class="detail-item"><i class="fas fa-clock"></i> 10:00 AM</span>
+                    <span class="detail-item"><i class="fas fa-map-marker-alt"></i> Colombo</span>
+                </div>
+            </div>
+
+            <form id="bookingForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" placeholder="Your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" placeholder="Your email address" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" placeholder="071 234 5678" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> ID Number</label>
+                        <input type="text" placeholder="National ID Number" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-ticket"></i> Number of Tickets</label>
+                        <select id="ticketQty">
+                            <option value="1">1 Ticket</option>
+                            <option value="2">2 Tickets</option>
+                            <option value="3">3 Tickets</option>
+                            <option value="4">4 Tickets</option>
+                            <option value="5">5 Tickets</option>
+                            <option value="6">6 Tickets</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-chair"></i> Seat Type</label>
+                        <select>
+                            <option value="standard">Standard (Rs. 850)</option>
+                            <option value="premium">Premium (Rs. 1200)</option>
+                            <option value="vip">VIP (Rs. 2000)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ticket-summary">
+                    <div class="row">
+                        <span class="label">Ticket Price</span>
+                        <span class="value">Rs. 850.00</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Quantity</span>
+                        <span class="value">1</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Service Fee</span>
+                        <span class="value">Rs. 50.00</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">Total</span>
+                        <span class="value">Rs. 900.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-proceed">
+                    <i class="fas fa-credit-card"></i> Proceed to Payment
+                </button>
+            </form>
+
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <button class="btn-back" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i> Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-shield-alt"></i> Sri Lanka Cricket - Official Ticketing Platform
+    </div>
+
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('✅ Your ticket booking was successful!\n\nTicket details will be sent to your email.');
+        });
+    </script>
+</body>
+</html>

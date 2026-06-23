@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLC - Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f4f0; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .navbar {
+            background: #0a3d2a;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .logo {
+            color: #f5c542;
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { font-size: 2rem; }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #e8f0e8;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.4rem 0.2rem;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .nav-links a:hover { border-bottom-color: #f5c542; color: #ffffff; }
+        .nav-links a i { margin-right: 6px; }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+        }
+        .register-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            border: 1px solid #e0ebe2;
+        }
+        .register-card .icon {
+            text-align: center;
+            font-size: 3rem;
+            color: #f5c542;
+            margin-bottom: 0.5rem;
+        }
+        .register-card h2 {
+            text-align: center;
+            color: #0a3d2a;
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+        .register-card .subtitle {
+            text-align: center;
+            color: #5f7a66;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #0a3d2a;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+        .form-group label i { color: #f5c542; margin-right: 6px; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0ebe2;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: 0.2s;
+            background: white;
+        }
+        .form-group input:focus {
+            border-color: #f5c542;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(245, 197, 66, 0.15);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 1rem 0 1.5rem 0;
+            font-size: 0.9rem;
+            color: #2d4d39;
+        }
+        .terms input { margin-top: 3px; }
+        .terms a { color: #0a3d2a; font-weight: 600; text-decoration: none; }
+        .terms a:hover { text-decoration: underline; }
+        .btn-register {
+            background: #f5c542;
+            border: none;
+            width: 100%;
+            padding: 0.9rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #0a3d2a;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-register:hover {
+            background: #e0b032;
+            transform: scale(1.02);
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #5f7a66;
+            font-size: 0.95rem;
+        }
+        .login-link a {
+            color: #0a3d2a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-link a:hover { text-decoration: underline; }
+
+        .footer {
+            text-align: center;
+            margin: 2rem 0 1.5rem 0;
+            color: #5f7a66;
+            font-size: 0.9rem;
+        }
+        .footer i { color: #f5c542; }
+
+        @media (max-width: 550px) {
+            .register-card { padding: 2rem 1.5rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-cricket"></i> SLC Ticketing
+        </div>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="matches.html"><i class="fas fa-calendar-alt"></i> Matches</a>
+            <a href="booking.html"><i class="fas fa-ticket-alt"></i> Buy Tickets</a>
+            <a href="signin.html"><i class="fas fa-user"></i> Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="register-card">
+            <div class="icon"><i class="fas fa-user-plus"></i></div>
+            <h2>Create an Account</h2>
+            <p class="subtitle">Register to purchase tickets</p>
+
+            <form id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> First Name</label>
+                        <input type="text" placeholder="Your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Last Name</label>
+                        <input type="text" placeholder="Your last name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" placeholder="Your email address" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" placeholder="071 234 5678" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" placeholder="Minimum 8 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-check-circle"></i> Confirm Password</label>
+                        <input type="password" placeholder="Re-enter password" required>
+                    </div>
+                </div>
+                <div class="terms">
+                    <input type="checkbox" required>
+                    <span>I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.</span>
+                </div>
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="signin.html">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <i class="fas fa-shield-alt"></i> Sri Lanka Cricket - Official Ticketing Platform
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('✅ Registration successful!\n\nYour account has been created. Please sign in.');
+            window.location.href = 'signin.html';
+        });
+    </script>
+</body>
+</html>
