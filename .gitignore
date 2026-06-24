@@ -1,0 +1,13 @@
+# Maven build target directory
+target/
+
+# NetBeans specific configuration folders
+nbproject/private/
+build/
+nbbuild/
+dist/
+nb-configuration.xml
+
+# OS generated files
+.DS_Store
+Thumbs.db
