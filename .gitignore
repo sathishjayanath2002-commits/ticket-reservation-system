@@ -1,19 +1,13 @@
-# Compiled class files
-*.class
-out/
-bin/
+# Maven build target directory
+target/
 
-# IDE files
-.idea/
-*.iml
-.vscode/
-.settings/
-.classpath
-.project
+# NetBeans specific configuration folders
+nbproject/private/
+build/
+nbbuild/
+dist/
+nb-configuration.xml
 
-# OS files
+# OS generated files
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
