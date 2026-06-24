@@ -1,40 +1,83 @@
 package com.cricket.ui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainMenuFrame extends JFrame {
+    
+    // Modern Color Palette (Premium Dark Navy Theme)
+    private final Color COLOR_BG = new Color(24, 30, 54);        // Dark Midnight Navy
+    private final Color COLOR_CARD = new Color(46, 51, 73);      // Lighter Slate Blue for panels
+    private final Color COLOR_TEXT = new Color(255, 255, 255);   // Crisp White Text
+    private final Color COLOR_MUTED = new Color(154, 161, 178);  // Soft Gray Subtext
+    private final Color COLOR_ACCENT = new Color(0, 122, 255);   // Electric Royal Blue
+    
     public MainMenuFrame() {
-        setTitle("Main Desktop Dashboard");
-        setSize(700, 400); // Widened slightly to fit 4 buttons comfortably
+        setTitle("Cricket Ticket Management System");
+        setSize(800, 500); // Expanded for a cleaner, spacious layout
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-
-        JLabel lblWelcome = new JLabel("Welcome to Cricket Ticket Management Portal", SwingConstants.CENTER);
-        lblWelcome.setFont(new Font("Arial", Font.BOLD, 16));
-        add(lblWelcome, BorderLayout.CENTER);
-
-        // Updated grid panel setup to hold 4 functional buttons side-by-side
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         
-        JButton btnBook = new JButton("View Matches");
-        JButton btnReserve = new JButton("Book a Ticket");
-        JButton btnHistory = new JButton("View Booked Tickets");
-        JButton btnAddMatch = new JButton("Add New Match");
+        // Root Panel setup with modern background color
+        JPanel rootPanel = new JPanel(new BorderLayout());
+        rootPanel.setBackground(COLOR_BG);
+        rootPanel.setBorder(new EmptyBorder(30, 30, 30, 30)); // Generous breathing room padding
+        setContentPane(rootPanel);
+
+        // --- 1. HEADER SECTION ---
+        JPanel headerPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        headerPanel.setBackground(COLOR_BG);
+        
+        JLabel lblTitle = new JLabel("CRICKET TICKET MANAGEMENT PORTAL", SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitle.setForeground(COLOR_TEXT);
+        
+        JLabel lblSubtitle = new JLabel("Logged in as Administrative Operator", SwingConstants.CENTER);
+        lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lblSubtitle.setForeground(COLOR_MUTED);
+        
+        headerPanel.add(lblTitle);
+        headerPanel.add(lblSubtitle);
+        rootPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // --- 2. CENTER DASHBOARD CARD (Welcome Canvas) ---
+        JPanel centerCard = new JPanel(new GridBagLayout());
+        centerCard.setBackground(COLOR_CARD);
+        centerCard.setBorder(BorderFactory.createLineBorder(new Color(74, 85, 104), 1, true));
+        
+        JLabel lblDisplay = new JLabel("Select an operation from the command deck below.");
+        lblDisplay.setFont(new Font("Segoe UI Light", Font.ITALIC, 16));
+        lblDisplay.setForeground(COLOR_TEXT);
+        centerCard.add(lblDisplay);
+        rootPanel.add(centerCard, BorderLayout.CENTER);
+
+        // --- 3. BOTTOM COMPONENT: MODERN GRID TOOLBAR ---
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 15, 15)); // 15px gap between items
+        buttonPanel.setBackground(COLOR_BG);
+        buttonPanel.setBorder(new EmptyBorder(25, 0, 0, 0)); // Pad top edge from center card
+        
+        JButton btnBook = createModernButton("View Matches");
+        JButton btnReserve = createModernButton("Book a Ticket");
+        JButton btnHistory = createModernButton("View History");
+        JButton btnAddMatch = createModernButton("Add Match");
         
         buttonPanel.add(btnBook);
         buttonPanel.add(btnReserve);
         buttonPanel.add(btnHistory);
         buttonPanel.add(btnAddMatch);
-        add(buttonPanel, BorderLayout.SOUTH);
+        rootPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Initialize our data and service layers
+        // Initialize backend connections
         com.cricket.dao.MatchDAO matchDAO = new com.cricket.dao.MatchDAO();
         com.cricket.service.ReservationService reservationService = new com.cricket.service.ReservationService();
 
-        // 📋 VIEW MATCHES LOGIC
+        // --- ACTION LOGIC DECK ---
+        
+        // 📋 VIEW MATCHES
         btnBook.addActionListener((ActionEvent e) -> {
             java.util.List<com.cricket.model.Match> matches = matchDAO.getAllMatches();
             StringBuilder matchSchedule = new StringBuilder("--- Available Match Fixtures ---\n\n");
@@ -44,13 +87,13 @@ public class MainMenuFrame extends JFrame {
                              .append("Schedule: ").append(m.getDateTime()).append("\n")
                              .append("----------------------------------------\n");
             }
-            JOptionPane.showMessageDialog(this, matchSchedule.toString(), "Match Booking Center", JOptionPane.INFORMATION_MESSAGE);
+            showStyledDialog(matchSchedule.toString(), "Match Schedule Repository");
         });
 
-        // 🎫 TICKET RESERVATION LOGIC
+        // 🎫 TICKET RESERVATION
         btnReserve.addActionListener((ActionEvent e) -> {
-            String matchId = JOptionPane.showInputDialog(this, "Enter the Match ID you want to book (e.g., M001):");
-            if (matchId == null || matchId.trim().isEmpty()) return;
+            String matchId = showStyledInput("Enter Match ID to book (e.g., M001):");
+            if (matchId == null) return;
 
             com.cricket.model.Match selectedMatch = null;
             for (com.cricket.model.Match m : matchDAO.getAllMatches()) {
@@ -61,70 +104,115 @@ public class MainMenuFrame extends JFrame {
             }
 
             if (selectedMatch == null) {
-                JOptionPane.showMessageDialog(this, "Match ID not found!", "Error", JOptionPane.ERROR_MESSAGE);
+                showStyledError("Match ID designation not found in system storage.");
                 return;
             }
 
-            String seat = JOptionPane.showInputDialog(this, "Enter Seat Number (Format: Letter A-F followed by numbers, e.g., A12):");
-            if (seat == null || seat.trim().isEmpty()) return;
+            String seat = showStyledInput("Enter Seat ID (Format: A-F followed by numbers, e.g., B14):");
+            if (seat == null) return;
 
-            String priceStr = JOptionPane.showInputDialog(this, "Enter Ticket Price (LKR / USD):");
-            if (priceStr == null || priceStr.trim().isEmpty()) return;
+            String priceStr = showStyledInput("Enter Ticket Fare Amount (LKR):");
+            if (priceStr == null) return;
 
             try {
                 double price = Double.parseDouble(priceStr);
                 com.cricket.model.Ticket bookedTicket = reservationService.bookTicket(selectedMatch, seat.trim(), price);
 
-                String receipt = "--- TICKET PURCHASE CONFIRMED ---\n\n" +
-                                 "Receipt Reference: " + bookedTicket.getTicketId() + "\n" +
+                String receipt = "--- TICKET CONFIGURATION AUDIT ---\n\n" +
+                                 "Receipt Ref: " + bookedTicket.getTicketId() + "\n" +
                                  "Fixture: " + bookedTicket.getMatch().getTeams() + "\n" +
-                                 "Seat Layout ID: " + bookedTicket.getSeatNumber() + "\n" +
-                                 "Total Paid: " + bookedTicket.getPrice() + "\n" +
-                                 "---------------------------------------------";
-                JOptionPane.showMessageDialog(this, receipt, "Reservation Successful", JOptionPane.INFORMATION_MESSAGE);
+                                 "Seat Track: " + bookedTicket.getSeatNumber() + "\n" +
+                                 "Fare Paid: LKR " + bookedTicket.getPrice() + "\n" +
+                                 "--------------------------------------------------";
+                showStyledDialog(receipt, "Transaction Complete");
 
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Invalid Price Format! Please enter numeric digits.", "Error", JOptionPane.ERROR_MESSAGE);
+                showStyledError("Invalid numeric character configuration entered for price.");
             } catch (com.cricket.util.AppException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Validation Failed", JOptionPane.WARNING_MESSAGE);
+                showStyledError(ex.getMessage());
             }
         });
 
-        // 🔍 VIEW BOOKED TICKETS LOGIC
+        // 🔍 VIEW HISTORY
         btnHistory.addActionListener((ActionEvent e) -> {
             java.util.List<com.cricket.model.Ticket> records = reservationService.getAllBookedTickets();
-            
             if (records.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No tickets have been reserved yet.", "Sales History Empty", JOptionPane.INFORMATION_MESSAGE);
+                showStyledDialog("No transaction history records located in current session.", "Ledger Log Empty");
                 return;
             }
             
-            StringBuilder historyLayout = new StringBuilder("--- Active Ticket Reservation Records ---\n\n");
+            StringBuilder historyLayout = new StringBuilder("--- System Transaction Archives ---\n\n");
             for (com.cricket.model.Ticket t : records) {
-                historyLayout.append("Receipt Reference: ").append(t.getTicketId()).append("\n")
-                             .append("Fixture Match: ").append(t.getMatch().getTeams()).append("\n")
-                             .append("Seat: ").append(t.getSeatNumber()).append("\n")
-                             .append("Cost: ").append(t.getPrice()).append("\n")
+                historyLayout.append("Receipt ID: ").append(t.getTicketId()).append("\n")
+                             .append("Match: ").append(t.getMatch().getTeams()).append("\n")
+                             .append("Seat Allocation: ").append(t.getSeatNumber()).append("\n")
+                             .append("Price: LKR ").append(t.getPrice()).append("\n")
                              .append("----------------------------------------------------\n");
             }
-            JOptionPane.showMessageDialog(this, historyLayout.toString(), "Reservation Database View", JOptionPane.INFORMATION_MESSAGE);
+            showStyledDialog(historyLayout.toString(), "Master Sales Ledger");
         });
 
-        // ➕ ADD MATCH LOGIC
+        // ➕ ADD NEW MATCH
         btnAddMatch.addActionListener((ActionEvent e) -> {
-            String id = JOptionPane.showInputDialog(this, "Enter Match ID (e.g., M003):");
-            if (id == null || id.trim().isEmpty()) return;
+            String id = showStyledInput("Assign Unique Match ID (e.g., M003):");
+            if (id == null) return;
 
-            String teams = JOptionPane.showInputDialog(this, "Enter Teams (e.g., New Zealand vs Pakistan):");
-            if (teams == null || teams.trim().isEmpty()) return;
+            String teams = showStyledInput("Enter Competing Teams (e.g., South Africa vs New Zealand):");
+            if (teams == null) return;
 
-            String dateTime = JOptionPane.showInputDialog(this, "Enter Schedule Date/Time (e.g., 2026-11-02 14:00):");
-            if (dateTime == null || dateTime.trim().isEmpty()) return;
+            String dateTime = showStyledInput("Schedule Timestamp (YYYY-MM-DD HH:MM):");
+            if (dateTime == null) return;
 
             com.cricket.model.Match newMatch = new com.cricket.model.Match(id, teams, dateTime);
             matchDAO.addMatch(newMatch);
-
-            JOptionPane.showMessageDialog(this, "Match Added Successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            showStyledDialog("New schedule profile indexed successfully.", "Database Updated");
         });
+    }
+
+    // --- HELPER COMPONENT DESIGN ENGINES ---
+
+    private JButton createModernButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btn.setForeground(COLOR_TEXT);
+        btn.setBackground(COLOR_CARD);
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createLineBorder(new Color(74, 85, 104), 1, true));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Hover animations
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(COLOR_ACCENT);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(COLOR_CARD);
+            }
+        });
+        return btn;
+    }
+
+    private void showStyledDialog(String content, String title) {
+        UIManager.put("OptionPane.background", COLOR_CARD);
+        UIManager.put("Panel.background", COLOR_CARD);
+        UIManager.put("OptionPane.messageForeground", COLOR_TEXT);
+        JOptionPane.showMessageDialog(this, content, title, JOptionPane.PLAIN_MESSAGE);
+    }
+
+    private String showStyledInput(String prompt) {
+        UIManager.put("OptionPane.background", COLOR_CARD);
+        UIManager.put("Panel.background", COLOR_CARD);
+        UIManager.put("OptionPane.messageForeground", COLOR_TEXT);
+        String input = JOptionPane.showInputDialog(this, prompt);
+        return (input == null || input.trim().isEmpty()) ? null : input.trim();
+    }
+
+    private void showStyledError(String errMsg) {
+        UIManager.put("OptionPane.background", COLOR_CARD);
+        UIManager.put("Panel.background", COLOR_CARD);
+        UIManager.put("OptionPane.messageForeground", new Color(255, 75, 75));
+        JOptionPane.showMessageDialog(this, errMsg, "System Security Error", JOptionPane.ERROR_MESSAGE);
     }
 }
